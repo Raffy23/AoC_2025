@@ -1,0 +1,29 @@
+[package]
+name = "aoc_2025"
+version = "0.1.0"
+edition = "2024"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+strip = "symbols"
+
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+[[bench]]
+name = "aoc"
+harness = false
+
+[dependencies]
+anyhow = "1.0.100"
+clap = { version = "4.5.53", features = ["derive"] }
+winnow = { version = "0.7.14", features = ["simd"] }
+
+[dev-dependencies]
+criterion = "0.7.0"
