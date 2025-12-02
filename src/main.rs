@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use aoc_2025::{Part, day01, utils::read_input};
+use aoc_2025::{Part, day01, day02, utils::read_input};
 use clap::{Parser, command};
 
 /// Simple runner for AoC 2025
@@ -38,6 +38,8 @@ fn run_day(day: u8, part: u8) {
     match (day, part) {
         (1, 1) => println!("{:?}", day01::solve1(input.as_str())),
         (1, 2) => println!("{:?}", day01::solve2(input.as_str())),
+        (2, 1) => println!("{:?}", day02::solve1(input.as_str())),
+        (2, 2) => println!("{:?}", day02::solve2(input.as_str())),
         _ => todo!(),
     }
 }
