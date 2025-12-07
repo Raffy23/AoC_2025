@@ -1,36 +1,26 @@
 pub fn solve1(input: &str) -> u64 {
-    let rows = input
-        .trim_end()
-        .split("\n")
-        .map(|row| row.as_bytes())
-        .collect::<Vec<_>>();
+    let rows = parse_input(input);
+    let c = find_start(rows[0]);
 
-    let c = rows[0]
-        .iter()
-        .enumerate()
-        .find(|(_, symbol)| **symbol == b'S')
-        .map(|(idx, _)| idx)
-        .unwrap();
-
-    let mut beams = vec![0u8; rows[0].len()];
+    let mut beams = vec![false; rows[0].len()];
     let mut beams_start = c;
     let mut beams_end = c;
-    beams[c] = 1;
+    beams[c] = true;
 
     let mut splits = 0;
     for row in rows {
         for c in beams_start..beams_end + 1 {
             let beam_value = beams[c];
 
-            if beam_value == 0 || row[c] == b'.' {
+            if beam_value == false || row[c] == b'.' {
                 continue;
             }
 
             if row[c] == b'^' {
                 splits += 1;
-                beams[c] = 0;
-                beams[c - 1] = 1;
-                beams[c + 1] = 1;
+                beams[c] = false;
+                beams[c - 1] = true;
+                beams[c + 1] = true;
 
                 beams_start = (c - 1).min(beams_start);
                 beams_end = (c + 1).max(beams_start);
@@ -42,18 +32,8 @@ pub fn solve1(input: &str) -> u64 {
 }
 
 pub fn solve2(input: &str) -> u64 {
-    let rows = input
-        .trim_end()
-        .split("\n")
-        .map(|row| row.as_bytes())
-        .collect::<Vec<_>>();
-
-    let c = rows[0]
-        .iter()
-        .enumerate()
-        .find(|(_, symbol)| **symbol == b'S')
-        .map(|(idx, _)| idx)
-        .unwrap();
+    let rows = parse_input(input);
+    let c = find_start(rows[0]);
 
     let mut beams = vec![0usize; rows[0].len()];
     let mut beams_start = c;
@@ -80,6 +60,25 @@ pub fn solve2(input: &str) -> u64 {
     }
 
     beams.into_iter().sum::<usize>() as u64
+}
+
+fn find_start(row: &[u8]) -> usize {
+    row
+        .iter()
+        .enumerate()
+        .find(|(_, symbol)| **symbol == b'S')
+        .map(|(idx, _)| idx)
+        .unwrap()
+}
+
+fn parse_input(input: &str) -> Vec<&[u8]> {
+    input
+        .trim_end()
+        .split("\n")
+        .enumerate()
+        .filter(|(idx, _)| idx % 2 == 0)
+        .map(|(_, row)| row.as_bytes())
+        .collect::<Vec<_>>()
 }
 
 #[allow(const_item_mutation)]
