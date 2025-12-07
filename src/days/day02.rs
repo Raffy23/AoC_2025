@@ -1,43 +1,68 @@
 use winnow::ascii::dec_uint;
+use winnow::combinator::terminated;
 use winnow::combinator::{iterator, seq};
 use winnow::error::{ContextError, ErrMode};
 use winnow::token::{literal, take};
-use winnow::combinator::terminated;
 
-const MAX_DIGITS:usize = 20; // should be enough for u64
+const MAX_DIGITS: usize = 20; // should be enough for u64
 
 pub fn solve1(input: &str) -> u64 {
     // Note: Keep buffer at a top level to save on memory allocation
     //       Buffer must be at least as big as the biggest number that is expected
     let mut buf: Vec<u8> = vec![0; MAX_DIGITS];
 
-    fold(input, |sum, (start, end)| {
-        (start..=end).fold(sum, |sum, number| {
-            let digits = to_digits(number, &mut buf);
+    fold(input, |mut sum, (start, end)| {
+        let mut current = start;
 
-            if digits.len() % 2 == 0 {
-                let middle = digits.len() / 2;
-                let Some((left, right)) = digits.split_at_checked(middle) else {
-                    unreachable!()
-                };
+        while current <= end {
+            let digits = to_digits(current, &mut buf);
 
-                let same = left == right;
-                if same {
-                    return sum + number;
-                }
+            if digits.len() % 2 == 1 {
+                // If digits are not even, skip to the starting number which has one digit more
+                current = 10u64.pow(digits.len() as u32);
+                continue;
             }
 
-            sum
-        })
+            let middle = digits.len() / 2;
+            let Some((left, right)) = digits.split_at_checked(middle) else {
+                unreachable!()
+            };
+
+            let same = left == right;
+            if same {
+                sum += current;
+
+                // increase left + 1 and right + 1
+                // should skip until the next number that repeats
+                let inc = 10u64.pow(right.len() as u32) + 1;
+                current += inc as u64;
+            } else {
+                let left = to_number(left);
+                let right = to_number(right);
+
+                // try to skip to the next number that repeats, either by
+                // adding the diff between legt and right or by going the next
+                // position where left repeats itself
+                if left > right {
+                    current += left - right;
+                } else {
+                    current = (left + 1) * 10u64.pow(middle as u32) + left + 1;
+                }
+            }
+        }
+
+        sum
     })
 }
 
 pub fn solve2(input: &str) -> u64 {
     let mut buf: Vec<u8> = vec![0; MAX_DIGITS];
 
-    fold(input, |sum, (start, end)| {
-        (start..=end).fold(sum, |sum, number| {
-            let digits = to_digits(number, &mut buf);
+    fold(input, |mut sum, (start, end)| {
+        let mut current = start;
+
+        while current <= end {
+            let digits = to_digits(current, &mut buf);
 
             for block_len in 1..=digits.len() / 2 {
                 let block = &digits[..block_len];
@@ -56,12 +81,15 @@ pub fn solve2(input: &str) -> u64 {
                 }
 
                 if matched {
-                    return sum + number;
+                    sum += current;
+                    break;
                 }
             }
 
-            sum
-        })
+            current += 1;
+        }
+
+        sum
     })
 }
 
@@ -78,6 +106,11 @@ fn to_digits(mut number: u64, buf: &mut [u8]) -> &[u8] {
     }
 
     return buf;
+}
+
+fn to_number(buf: &[u8]) -> u64 {
+    buf.into_iter()
+        .fold(0, |num, &digit| num * 10 + digit as u64)
 }
 
 fn fold<F>(input: &str, solver: F) -> u64
