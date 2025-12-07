@@ -2,10 +2,9 @@
 
 ```mermaid
 xychart-beta horizontal
-    title "Benchmark"
     x-axis [Day01_Part1, Day01_Part2, Day02_Part1, Day02_Part2, Day03_Part1, Day03_Part2, Day04_Part1, Day04_Part2, Day05_Part1, Day05_Part2, Day06_Part1, Day06_Part2, Day07_Part1, Day07_Part2]
-    y-axis "Runtime (in µs) "10 --> 19000
-    bar [55.111, 58.647, 6.8402, 17303, 45.403, 65.095, 106.19, 383.03, 73.597, 29.584, 82.791, 36.391, 16.043, 15.697]
+    y-axis "Execution time in log(µs) "0 --> 4.2787
+    bar [1.7412, 1.7682, 0.8350, 4.2381, 1.6570, 1.8135, 2.0260, 2.5832, 1.8668, 1.4710, 1.9179, 1.5609, 1.2052, 1.1958]
 ```
 
 <table>
