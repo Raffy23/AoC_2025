@@ -1,6 +1,6 @@
 use std::hint::black_box;
 
-use aoc_2025::{day01, day02, day03, day04, day05, day06, day07, day08, utils::read_input};
+use aoc_2025::{day01, day02, day03, day04, day05, day06, day07, day08, day09, utils::read_input};
 use criterion::{Criterion, criterion_group, criterion_main};
 
 criterion_group!(
@@ -13,6 +13,7 @@ criterion_group!(
     day06_benchmark,
     day07_benchmark,
     day08_benchmark,
+    day09_benchmark,
 );
 criterion_main!(benches);
 
@@ -109,5 +110,17 @@ fn day08_benchmark(c: &mut Criterion) {
 
     c.bench_function("Day08 Part2", |b| {
         b.iter(|| day08::solve2(black_box(&mut input.as_str())))
+    });
+}
+
+fn day09_benchmark(c: &mut Criterion) {
+    let input = read_input(9, None).expect("Unable to read input file!");
+
+    c.bench_function("Day09 Part1", |b| {
+        b.iter(|| day09::solve1(black_box(&mut input.as_str())))
+    });
+
+    c.bench_function("Day09 Part2", |b| {
+        b.iter(|| day09::solve2(black_box(&mut input.as_str())))
     });
 }
