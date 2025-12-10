@@ -30,6 +30,7 @@ anyhow = "1.0.100"
 clap = { version = "4.5.53", features = ["derive"] }
 rangemap = "1.7.0"
 winnow = { version = "0.7.14", features = ["simd"] }
+z3 = { version = "0.19.5", features = ["gh-release"] }
 
 [dev-dependencies]
 criterion = "0.7.0"
